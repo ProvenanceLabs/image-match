@@ -3,7 +3,10 @@ from skimage.io import imread
 from PIL import Image
 from PIL.MpoImagePlugin import MpoImageFile
 from cairosvg import svg2png
-from cStringIO import StringIO
+try:
+    from io import StringIO
+except ImportError:
+    from cStringIO import StringIO
 import numpy as np
 
 
