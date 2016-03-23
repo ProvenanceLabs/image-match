@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+  image-match:
+    build: .
+    volumes:
+      - ./image_match:/usr/src/app/image_match
+      - ./setup.py:/usr/src/app/setup.py
+  elasticsearch:
+    image: elasticsearch

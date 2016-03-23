@@ -1,0 +1,8 @@
+.eggs
+.git
+.ropeproject
+.editorconfig
+.gitignore
+Dockerfile
+LICENSES.md
+README.md
