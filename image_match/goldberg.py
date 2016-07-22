@@ -3,7 +3,7 @@ from skimage.io import imread
 from PIL import Image
 from PIL.MpoImagePlugin import MpoImageFile
 from cairosvg import svg2png
-from cStringIO import StringIO
+from io import BytesIO
 import numpy as np
 
 
@@ -216,15 +216,15 @@ class ImageSignature(object):
         """
         if bytestream:
             try:
-                img = Image.open(StringIO(image_or_path))
+                img = Image.open(BytesIO(image_or_path))
             except IOError:
                 #  could be an svg, attempt to convert
-                img = Image.open(StringIO(svg2png(image_or_path)))
+                img = Image.open(BytesIO(svg2png(image_or_path)))
             img = img.convert('RGB')
             return rgb2gray(np.asarray(img, dtype=np.uint8))
-        elif type(image_or_path) is unicode:
-            return imread(image_or_path, as_grey=True)
         elif type(image_or_path) is str:
+            return imread(image_or_path, as_grey=True)
+        elif type(image_or_path) is bytes:
             try:
                 img = Image.open(image_or_path)
                 arr = np.array(img.convert('RGB'))
