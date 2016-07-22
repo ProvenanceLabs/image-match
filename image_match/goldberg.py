@@ -222,7 +222,7 @@ class ImageSignature(object):
                 img = Image.open(StringIO(svg2png(image_or_path)))
             img = img.convert('RGB')
             return rgb2gray(np.asarray(img, dtype=np.uint8))
-        elif type(image_or_path) is unicode:
+        elif type(image_or_path) is bytes:
             return imread(image_or_path, as_grey=True)
         elif type(image_or_path) is str:
             try:
