@@ -1,0 +1,34 @@
+language: python
+python:
+  - 2.7
+
+services:
+  - elasticsearch
+
+before_script:
+  - sleep 10
+
+# From https://github.com/Jorge-C/ordination/blob/master/.travis.yml
+# Setup anaconda
+before_install:
+  - wget http://repo.continuum.io/miniconda/Miniconda-2.2.2-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b
+  - export PATH=/home/travis/anaconda/bin:$PATH
+  # Update conda itself
+  - conda update --yes conda
+  # The next couple lines fix a crash with multiprocessing on Travis and are not specific to using Miniconda
+  - sudo rm -rf /dev/shm
+  - sudo ln -s /run/shm /dev/shm
+
+# Install packages
+install:
+  - conda create --yes -n env_name python=$TRAVIS_PYTHON_VERSION pip numpy matplotlib nose
+  - source activate env_name
+  - pip install pytest  # not yet available for py3 in anaconda
+  - pip install -e .
+  - pip install codecov
+
+script: py.test -n auto --cov=image_match
+
+after_success: codecov
