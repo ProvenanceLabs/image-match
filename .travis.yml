@@ -5,9 +5,6 @@ python:
 services:
   - elasticsearch
 
-before_script:
-  - sleep 10
-
 # From http://conda.pydata.org/docs/travis.html
 install:
   - sudo apt-get update
@@ -29,7 +26,7 @@ install:
   # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy scikit-image
   - source activate test-environment
-  - python setup.py install
+  - pip install -e .
 
 script: py.test -s -v
 
