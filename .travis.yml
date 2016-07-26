@@ -30,8 +30,7 @@ install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy scikit-image
   - source activate test-environment
   - python setup.py install
-  - pip install codecov
 
-script: py.test -n auto -s -v --cov=image_match
+script: py.test -n auto -s -v
 
 after_success: codecov
