@@ -24,11 +24,9 @@ install:
   - conda info -a
 
   # Replace dep1 dep2 ... with your dependencies
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy scikit-image
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy scikit-image pytest
   - source activate test-environment
   - python setup.py install
 
 before_script: source activate test-environment
 script: py.test -s -v
-
-after_success: codecov
