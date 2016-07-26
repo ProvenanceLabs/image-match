@@ -28,5 +28,4 @@ install:
   - source activate test-environment
   - python setup.py install
 
-before_script: source activate test-environment
 script: py.test -s -v
