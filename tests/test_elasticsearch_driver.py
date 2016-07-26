@@ -31,9 +31,6 @@ def setup_index(request, index_name):
     def fin():
         try:
             es.indices.delete(index_name)
-        except RequestError as e:
-            if e.error != u'index_not_found_exception':
-                raise
         except NotFoundError:
             pass
 
@@ -44,9 +41,6 @@ def cleanup_index(request, es, index_name):
     def fin():
         try:
             es.indices.delete(index_name)
-        except NotFoundError as e:
-            if e.error != u'index_not_found_exception':
-                raise
         except NotFoundError:
             pass
     request.addfinalizer(fin)
