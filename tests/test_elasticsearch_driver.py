@@ -195,3 +195,9 @@ def test_duplicate_removal(ses):
     sleep(1)
     r = ses.search_image('test1.jpg')
     assert len(r) == 1
+
+
+def test_index_refresh(ses):
+    ses.add_image('test1.jpg')
+    r = ses.search_image('test1.jpg', refresh_after=True)
+    assert len(r) == 1
