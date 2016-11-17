@@ -97,7 +97,14 @@ class SignatureES(SignatureDatabaseBase):
         Args:
             path (string): path value to compare to those in the elastic search
         """
-        matching_paths = [item['_id'] for item in self.es.search()['hits']['hits'] if item['_source']['path'] == path]
-        duplicate_ids_iter = iter(deque(matching_paths, len(matching_paths)-1))
-        for id_tag in duplicate_ids_iter:
-            self.es.delete(index=self.index, doc_type=self.doc_type, id=id_tag)
+        matching_paths = [item['_id'] for item in
+                          self.es.search(body={'query':
+                                               {'match':
+                                                {'path': path}
+                                               }
+                                              },
+                                         index=self.index)['hits']['hits']
+                          if item['_source']['path'] == path]
+        if len(matching_paths) > 0:
+            for id_tag in matching_paths[1:]:
+                self.es.delete(index=self.index, doc_type=self.doc_type, id=id_tag)
