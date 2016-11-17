@@ -80,6 +80,12 @@ def test_add_image_by_path(ses):
     assert True
 
 
+def test_index_refresh(ses):
+    ses.add_image('test1.jpg', refresh_after=True)
+    r = ses.search_image('test1.jpg')
+    assert len(r) == 1
+
+
 def test_add_image_as_bytestream(ses):
     with open('test1.jpg', 'rb') as f:
         ses.add_image('bytestream_test', img=f.read(), bytestream=True)
@@ -92,8 +98,7 @@ def test_add_image_with_different_name(ses):
 
 
 def test_lookup_from_url(ses):
-    ses.add_image('test1.jpg')
-    sleep(1)
+    ses.add_image('test1.jpg', refresh_after=True)
     r = ses.search_image(test_img_url1)
     assert len(r) == 1
     assert r[0]['path'] == 'test1.jpg'
@@ -103,8 +108,7 @@ def test_lookup_from_url(ses):
 
 
 def test_lookup_from_file(ses):
-    ses.add_image('test1.jpg')
-    sleep(1)
+    ses.add_image('test1.jpg', refresh_after=True)
     r = ses.search_image('test1.jpg')
     assert len(r) == 1
     assert r[0]['path'] == 'test1.jpg'
@@ -113,8 +117,7 @@ def test_lookup_from_file(ses):
     assert 'id' in r[0]
 
 def test_lookup_from_bytestream(ses):
-    ses.add_image('test1.jpg')
-    sleep(1)
+    ses.add_image('test1.jpg', refresh_after=True)
     with open('test1.jpg', 'rb') as f:
         r = ses.search_image(f.read(), bytestream=True)
     assert len(r) == 1
@@ -124,17 +127,15 @@ def test_lookup_from_bytestream(ses):
     assert 'id' in r[0]
 
 def test_lookup_with_cutoff(ses):
-    ses.add_image('test2.jpg')
+    ses.add_image('test2.jpg', refresh_after=True)
     ses.distance_cutoff=0.01
-    sleep(1)
     r = ses.search_image('test1.jpg')
     assert len(r) == 0
 
 
 def check_distance_consistency(ses):
     ses.add_image('test1.jpg')
-    ses.add_image('test2.jpg')
-    sleep(1)
+    ses.add_image('test2.jpg', refresh_after=True)
     r = ses.search_image('test1.jpg')
     assert r[0]['dist'] == 0.0
     assert r[-1]['dist'] == 0.42672771706789686
@@ -146,8 +147,7 @@ def test_add_image_with_metadata(ses):
                          'ok!'
                      }
                 }
-    ses.add_image('test1.jpg', metadata=metadata)
-    sleep(1)
+    ses.add_image('test1.jpg', metadata=metadata, refresh_after=True)
     r = ses.search_image('test1.jpg')
     assert r[0]['metadata'] == metadata
     assert 'path' in r[0]
@@ -160,8 +160,7 @@ def test_all_orientations(ses):
     im = Image.open('test1.jpg')
     im.rotate(90, expand=True).save('rotated_test1.jpg')
 
-    ses.add_image('test1.jpg')
-    sleep(1)
+    ses.add_image('test1.jpg', refresh_after=True)
     r = ses.search_image('rotated_test1.jpg', all_orientations=True)
     assert len(r) == 1
     assert r[0]['path'] == 'test1.jpg'
@@ -174,9 +173,8 @@ def test_all_orientations(ses):
 
 
 def test_duplicate(ses):
-    ses.add_image('test1.jpg')
-    ses.add_image('test1.jpg')
-    sleep(1)
+    ses.add_image('test1.jpg', refresh_after=True)
+    ses.add_image('test1.jpg', refresh_after=True)
     r = ses.search_image('test1.jpg')
     assert len(r) == 2
     assert r[0]['path'] == 'test1.jpg'
@@ -193,11 +191,5 @@ def test_duplicate_removal(ses):
     assert len(r) == 10
     ses.delete_duplicates('test1.jpg')
     sleep(1)
-    r = ses.search_image('test1.jpg')
-    assert len(r) == 1
-
-
-def test_index_refresh(ses):
-    ses.add_image('test1.jpg', refresh_after=True)
     r = ses.search_image('test1.jpg')
     assert len(r) == 1
