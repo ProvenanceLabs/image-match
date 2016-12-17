@@ -2,13 +2,13 @@ Image signatures and distances
 ==============================
 Consider these two photographs of the `Mona Lisa`_:
 
-.. image:: https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg/687px-Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg
+.. image:: _images/MonaLisa_Wikipedia.jpg
 
 (credit:
 `Wikipedia <https://en.wikipedia.org/wiki/Mona_Lisa#/media/File:Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg>`__
 Public domain)
 
-.. image:: https://pixabay.com/static/uploads/photo/2012/11/28/08/56/mona-lisa-67506_960_720.jpg
+.. image:: _images/MonaLisa_WikiImages.jpg
 
 (credit:
 `WikiImages <https://pixabay.com/en/mona-lisa-painting-art-oil-painting-67506/>`_
@@ -31,7 +31,7 @@ Returns ``0.22095170140933634``. Normalized distances of less than ``0.40`` are
 very likely matches. If we try this again against a dissimilar image, say,
 Caravaggio's `Supper at Emmaus <https://en.wikipedia.org/wiki/Supper_at_Emmaus_(Caravaggio),_London>`_:
 
-.. image:: https://upload.wikimedia.org/wikipedia/commons/e/e0/Caravaggio_-_Cena_in_Emmaus.jpg
+.. image:: _images/Caravaggio_Wikipedia.jpg
 
 (credit: `Wikipedia <https://en.wikipedia.org/wiki/Caravaggio#/media/File:Caravaggio_-_Cena_in_Emmaus.jpg>`__ Public domain)
 
@@ -49,7 +49,7 @@ latter case).
 
 Now consider this subtly-modified version of the Mona Lisa:
 
-.. image:: https://c2.staticflickr.com/8/7158/6814444991_08d82de57e_z.jpg
+.. image:: _images/MonaLisa_Remix_Flickr.jpg
 
 (credit: `Michael Russell <https://www.flickr.com/photos/planetrussell/6814444991>`_ `Attribution-ShareAlike 2.0 Generic <https://creativecommons.org/licenses/by-sa/2.0/>`_)
 
