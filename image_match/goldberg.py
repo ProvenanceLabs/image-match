@@ -233,7 +233,7 @@ class ImageSignature(object):
                     raise CorruptImageError()
             img = img.convert('RGB')
             return rgb2gray(np.asarray(img, dtype=np.uint8))
-        elif type(image_or_path) is str:
+        elif isinstance(image_or_path, basestring):
             return imread(image_or_path, as_grey=True)
         elif type(image_or_path) is bytes:
             try:
