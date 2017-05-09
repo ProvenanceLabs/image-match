@@ -17,16 +17,16 @@ INDEX_NAME = 'test_environment_{}'.format(hashlib.md5(os.urandom(128)).hexdigest
 DOC_TYPE = 'image'
 MAPPINGS = {
   "mappings": {
-    DOC_TYPE: { 
+    DOC_TYPE: {
       "dynamic": True,
-      "properties": { 
-        "metadata": { 
+      "properties": {
+        "metadata": {
             "type": "nested",
             "dynamic": True,
-            "properties": { 
+            "properties": {
                 "tenant_id": { "type": "keyword" },
                 "project_id": { "type": "keyword" }
-            } 
+            }
         }
       }
     }
@@ -101,23 +101,23 @@ def test_lookup_with_filter_by_metadata(ses):
     assert len(r) == 2
 
     r = ses.search_image('test1.jpg', pre_filter=_nested_filter('foo', 'project-z'))
-    assert len(r) == 0  
+    assert len(r) == 0
 
     r = ses.search_image('test1.jpg', pre_filter=_nested_filter('bar', 'project-x'))
     assert len(r) == 1
 
     r = ses.search_image('test1.jpg', pre_filter=_nested_filter('bar-2', 'project-x'))
     assert len(r) == 0
-    
+
     r = ses.search_image('test1.jpg', pre_filter=_nested_filter('bar', 'project-z'))
-    assert len(r) == 0    
-    
+    assert len(r) == 0
+
 def _metadata(tenant_id, project_id):
     return dict(
             tenant_id=tenant_id,
             project_id=project_id
     )
-    
+
 def _nested_filter(tenant_id, project_id):
     return {
         "nested" : {
@@ -129,6 +129,6 @@ def _nested_filter(tenant_id, project_id):
                         {"term": {"metadata.project_id": project_id}}
                     ]
                 }
-             }            
+             }
         }
     }

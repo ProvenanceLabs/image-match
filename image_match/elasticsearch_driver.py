@@ -49,6 +49,7 @@ class SignatureES(SignatureDatabaseBase):
     def search_single_record(self, rec, pre_filter=None):
         path = rec.pop('path')
         signature = rec.pop('signature')
+
         if 'metadata' in rec:
             rec.pop('metadata')
 
@@ -70,12 +71,8 @@ class SignatureES(SignatureDatabaseBase):
                               size=self.size,
                               timeout=self.timeout)['hits']['hits']
 
-        sigs = np.array([x['_source']['signature'] for x in res])
-
-        if sigs.size == 0:
+        if len(res) == 0:
             return []
-
-        dists = normalized_distance(sigs, np.array(signature))
 
         formatted_res = [{'id': x['_id'],
                           'score': x['_score'],
@@ -83,14 +80,17 @@ class SignatureES(SignatureDatabaseBase):
                           'path': x['_source'].get('url', x['_source'].get('path'))}
                          for x in res]
 
-        for i, row in enumerate(formatted_res):
-            row['dist'] = dists[i]
-        formatted_res = filter(lambda y: y['dist'] < self.distance_cutoff, formatted_res)
+        formatted_res = filter(lambda y: y['score'] > self.score_cutoff, formatted_res)
 
         return formatted_res
 
     def insert_single_record(self, rec, refresh_after=False):
         rec['timestamp'] = datetime.now()
+
+        # Don't store signature in index
+        if 'signature' in rec:
+            rec.pop('signature')
+
         self.es.index(index=self.index, doc_type=self.doc_type, body=rec, refresh=refresh_after)
 
     def delete_duplicates(self, path):
