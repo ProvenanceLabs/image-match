@@ -72,7 +72,7 @@ if not os.path.exists("101_ObjectCategories"):
     print(cmd)
     os.system(cmd)
 
-    cmd = "tar xzvf {}".format(local_file)
+    cmd = "tar xzf {}".format(local_file)
     print(cmd)
     os.system(cmd)
 
