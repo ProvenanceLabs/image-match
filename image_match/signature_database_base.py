@@ -78,7 +78,7 @@ class SignatureDatabaseBase(object):
         """
         raise NotImplementedError
 
-    def insert_single_record(self, rec):
+    def insert_single_record(self, rec, refresh_after=False):
         """Insert an image record.
 
         Must be implemented by derived class.
