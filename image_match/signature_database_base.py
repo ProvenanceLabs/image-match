@@ -286,7 +286,7 @@ class SignatureDatabaseBase(object):
         return r
 
 
-def make_record(path, gis, k, N, img=None, bytestream=False, metadata=None, flat=False):
+def make_record(path, gis, k, N, img=None, bytestream=False, metadata=None, flat=False, flatint=False):
     """Makes a record suitable for database insertion.
 
     Note:
@@ -314,6 +314,8 @@ def make_record(path, gis, k, N, img=None, bytestream=False, metadata=None, flat
         flat (Optional): by default, words are stored in separate properties from simple_word_0 to
             simple_word_N (N given as a parameter). When flat is set to True, all the word are stored
             into one single 'simple_words' property, as a string, space separated.
+        flatint (Optional): only if flat is True. Will store words as an array of integers instead of
+            a long string space separated.
 
     Returns:
         An image record.
@@ -351,6 +353,15 @@ def make_record(path, gis, k, N, img=None, bytestream=False, metadata=None, flat
          'metadata': {...}
          }
 
+         Or when flat is set to True with flatint also set to True:
+
+         {'path': 'https://pixabay.com/static/uploads/photo/2012/11/28/08/56/mona-lisa-67506_960_720.jpg',
+         'signature': [0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 2, 2, 2, 2, 0 ... ]
+         'simple_words': [42252475, 23885671, 9967839, 4257902, 28651959, 33773597, 39331441, 39327300, 11337345,
+                          9571961, 28697868, 14834907, 7434746, 37985525, 10753207, 9566120, ...]
+         'metadata': {...}
+         }
+
     """
     record = dict()
     record['path'] = path
@@ -370,8 +381,11 @@ def make_record(path, gis, k, N, img=None, bytestream=False, metadata=None, flat
     words = words_to_int(words)
 
     if flat:
-        for i in range(N):
-            record['simple_words'] = " ".join(map(str, words.tolist()))
+        if flatint:
+            record['simple_words'] = words.tolist()
+        else:
+            for i in range(N):
+                record['simple_words'] = " ".join(map(str, words.tolist()))
     else:
         for i in range(N):
             record[''.join(['simple_word_', str(i)])] = words[i].tolist()
