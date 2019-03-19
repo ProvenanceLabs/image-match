@@ -166,17 +166,22 @@ if delete_indices:
 print("Created index {} for fields documents".format(INDEX_NAME_FIELDS))
 print("Created index {} for flat documents".format(INDEX_NAME_FLAT))
 print("Created index {} for flatint documents".format(INDEX_NAME_FLATINT))
+
+# The relatively small size of returned document (100, which is default)
+# can lead to hard to inconsistent results (typically
+# documents only found in flat but not in fields) because the correct document
+# might not be in the top 100 for a fields search, but in the top 100 for a
+# flat or flatint search.
 ses_fields = SignatureES_fields(es=es, index=INDEX_NAME_FIELDS,
-                                doc_type=DOC_TYPE_FIELDS)
+                                doc_type=DOC_TYPE_FIELDS, size=100)
 ses_flat = SignatureES_flat(es=es, index=INDEX_NAME_FLAT,
-                            doc_type=DOC_TYPE_FLAT)
+                            doc_type=DOC_TYPE_FLAT, size=100)
 ses_flatint = SignatureES_flatint(es=es, index=INDEX_NAME_FLATINT,
-                                  doc_type=DOC_TYPE_FLATINT)
+                                  doc_type=DOC_TYPE_FLATINT, size=100)
 
 # Download dataset
 print("Download dataset if does not exist")
-dataset_url = "http://www.vision.caltech.edu/Image_Datasets/Caltech101/" \
-              "101_ObjectCategories.tar.gz"
+dataset_url = "http://www.vision.caltech.edu/Image_Datasets/Caltech101/101_ObjectCategories.tar.gz"
 dir_path = os.path.dirname(os.path.realpath(__file__))
 local_file = os.path.join(dir_path, "101_ObjectCategories.tar.gz")
 local_directory = os.path.join(dir_path, "101_ObjectCategories")
@@ -263,9 +268,6 @@ for msm in range_msm:
         res_flatint = ses_flatint.search_image(image_path_to_search)
         total_time_search_flatint += (time.time() - t_search_flatint)
 
-        # Delete blurred image
-        os.remove(altered_path)
-
         # FLAT analysis
         # Precision of first result
         same_first_flat_bool = False
@@ -310,14 +312,15 @@ for msm in range_msm:
             elif image_path not in pathes_flatint and pathes_fields[0] == image_path:
                 not_same_first_flatint[1] += 1
 
+        # Delete blurred image
+        os.remove(altered_path)
+
     stats_msm[str(msm)] = {
         "same_first_flat": same_first_flat,
         "not_same_first_flat": not_same_first_flat,
         "same_first_flatint": same_first_flatint,
         "not_same_first_flatint": not_same_first_flatint
     }
-
-    print(stats_msm)
 
     print("")
     print("minimum_should_match = {}".format(msm))
@@ -336,6 +339,8 @@ for msm in range_msm:
     print(". {} found in fields but not in flatint".format(not_same_first_flatint[1]))
     print(". {} found in flatint but not in fields".format(not_same_first_flatint[2]))
 
+
+print(stats_msm)
 
 print("")
 num_searches = num_random * max_msm
