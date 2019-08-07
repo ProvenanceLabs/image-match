@@ -605,4 +605,6 @@ class ImageSignature(object):
         norm_diff = np.linalg.norm(b - a)
         norm1 = np.linalg.norm(b)
         norm2 = np.linalg.norm(a)
+        if norm1 + norm1 == 0:
+            return 0.0
         return norm_diff / (norm1 + norm2)
