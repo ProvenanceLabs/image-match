@@ -74,4 +74,4 @@ def test_difference():
     sig1 = gis.generate_signature('test.jpg')
     sig2 = gis.generate_signature(test_diff_img_url)
     dist = gis.normalized_distance(sig1, sig2)
-    assert dist == 0.42263283502672722
+    assert dist == 0.424549547059671
