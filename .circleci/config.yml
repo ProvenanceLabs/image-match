@@ -1,0 +1,15 @@
+version: 2.1
+jobs:
+  test:
+    docker:
+      - image: python:3.6.4-stretch
+      - image: elasticsearch:7.1.0
+    working_directory: ~/code
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: pip install -e .[test]
+      - run:
+          name: Test
+          command: pytest tests
