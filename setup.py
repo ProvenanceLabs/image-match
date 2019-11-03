@@ -1,5 +1,5 @@
 """
-image_match is a simple package for finding approximate image matches from a
+image-match is a simple package for finding approximate image matches from a
 corpus. It is similar, for instance, to pHash <http://www.phash.org/>, but
 includes a database backend that easily scales to billions of images and
 supports sustained high rates of image insertion: up to 10,000 images/s on our
@@ -56,9 +56,9 @@ docs_require = [
 
 
 setup(
-    name='image_match',
-    version=find_version('image_match', '__init__.py'),
-    description='image_match is a simple package for finding approximate '\
+    name='image-match',
+    version=find_version('', 'build.info'),
+    description='image-match is a simple package for finding approximate '\
                 'image matches from a corpus.',
     long_description=__doc__,
     url='https://github.com/ascribe/image-match/',

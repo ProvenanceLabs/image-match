@@ -10,14 +10,13 @@ class SignatureES(SignatureDatabaseBase):
 
     """
 
-    def __init__(self, es, index='images', doc_type='image', timeout='10s', size=100,
+    def __init__(self, es, index='images', timeout='10s', size=100,
                  *args, **kwargs):
         """Extra setup for Elasticsearch
 
         Args:
             es (elasticsearch): an instance of the elasticsearch python driver
             index (Optional[string]): a name for the Elasticsearch index (default 'images')
-            doc_type (Optional[string]): a name for the document time (default 'image')
             timeout (Optional[int]): how long to wait on an Elasticsearch query, in seconds (default 10)
             size (Optional[int]): maximum number of Elasticsearch results (default 100)
             *args (Optional): Variable length argument list to pass to base constructor
@@ -40,7 +39,6 @@ class SignatureES(SignatureDatabaseBase):
         """
         self.es = es
         self.index = index
-        self.doc_type = doc_type
         self.timeout = timeout
         self.size = size
 
