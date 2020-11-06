@@ -243,7 +243,7 @@ class ImageSignature(object):
                 arr = np.array(img.convert('RGB'))
             except IOError:
                 # try again due to PIL weirdness
-                return imread(image_or_path, as_grey=True)
+                return imread(image_or_path, as_gray=True)
             if handle_mpo:
                 # take the first images from the MPO
                 if arr.shape == (2,) and isinstance(arr[1].tolist(), MpoImageFile):
