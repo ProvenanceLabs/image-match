@@ -404,7 +404,7 @@ def get_words(array, k, N):
             words[i] = array[pos:pos+k]
         else:
             temp = array[pos:].copy()
-            temp.resize(k)
+            temp.resize(k, refcheck=False)
             words[i] = temp
 
     return words
