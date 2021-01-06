@@ -17,10 +17,8 @@ urlretrieve(test_img_url1, 'test1.jpg')
 urlretrieve(test_img_url2, 'test2.jpg')
 
 INDEX_NAME = 'test_environment_{}'.format(hashlib.md5(os.urandom(128)).hexdigest()[:12])
-DOC_TYPE = 'image'
 MAPPINGS = {
   "mappings": {
-    DOC_TYPE: {
       "dynamic": True,
       "properties": {
         "metadata": {
@@ -31,7 +29,6 @@ MAPPINGS = {
             }
         }
       }
-    }
   }
 }
 
@@ -74,7 +71,8 @@ def es():
 
 @pytest.fixture
 def ses(es, index_name):
-    return SignatureES(es=es, index=index_name, doc_type=DOC_TYPE)
+    return SignatureES(es=es, index=index_name)
+
 
 def test_elasticsearch_running(es):
     i = 0

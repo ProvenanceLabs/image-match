@@ -10,14 +10,13 @@ class SignatureES(SignatureDatabaseBase):
 
     """
 
-    def __init__(self, es, index='images', doc_type='image', timeout='10s', size=100,
+    def __init__(self, es, index='images', timeout='10s', size=100,
                  *args, **kwargs):
         """Extra setup for Elasticsearch
 
         Args:
             es (elasticsearch): an instance of the elasticsearch python driver
             index (Optional[string]): a name for the Elasticsearch index (default 'images')
-            doc_type (Optional[string]): a name for the document time (default 'image')
             timeout (Optional[int]): how long to wait on an Elasticsearch query, in seconds (default 10)
             size (Optional[int]): maximum number of Elasticsearch results (default 100)
             *args (Optional): Variable length argument list to pass to base constructor
@@ -40,7 +39,6 @@ class SignatureES(SignatureDatabaseBase):
         """
         self.es = es
         self.index = index
-        self.doc_type = doc_type
         self.timeout = timeout
         self.size = size
 
@@ -64,11 +62,12 @@ class SignatureES(SignatureDatabaseBase):
         if pre_filter is not None:
             body['query']['bool']['filter'] = pre_filter
 
-        res = self.es.search(index=self.index,
-                              doc_type=self.doc_type,
-                              body=body,
-                              size=self.size,
-                              timeout=self.timeout)['hits']['hits']
+        res = self.es.search(
+            index=self.index,
+            body=body,
+            size=self.size,
+            timeout=self.timeout
+        )['hits']['hits']
 
         sigs = np.array([x['_source']['signature'] for x in res])
 
@@ -91,7 +90,9 @@ class SignatureES(SignatureDatabaseBase):
 
     def insert_single_record(self, rec, refresh_after=False):
         rec['timestamp'] = datetime.now()
-        self.es.index(index=self.index, doc_type=self.doc_type, body=rec, refresh=refresh_after)
+        self.es.index(
+            index=self.index, body=rec, refresh=refresh_after
+        )
 
     def delete_duplicates(self, path):
         """Delete all but one entries in elasticsearch whose `path` value is equivalent to that of path.
@@ -108,4 +109,4 @@ class SignatureES(SignatureDatabaseBase):
                           if item['_source']['path'] == path]
         if len(matching_paths) > 0:
             for id_tag in matching_paths[1:]:
-                self.es.delete(index=self.index, doc_type=self.doc_type, id=id_tag)
+                self.es.delete(index=self.index, id=id_tag)

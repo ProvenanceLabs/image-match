@@ -1,0 +1,54 @@
+version: 2
+executorType: docker
+jobs:
+  test:
+    docker:
+      - image: python:3.6.4-stretch
+      - image: elasticsearch:7.1.0
+        environment:
+          - cluster.name: elasticsearch
+          - xpack.security.enabled: false
+          - transport.host: localhost
+          - network.host: 127.0.0.1
+          - http.port: 9200
+          - discovery.type: single-node
+    working_directory: ~/code
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: pip install -e .[test]
+      - run:
+          name: Test
+          command: pytest
+  deploy:
+    docker:
+      - image: docker:18.06.1-git
+    working_directory: ~/code
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Install cli tools
+          command: |
+            apk --update add py-pip curl
+            pip install --upgrade pip
+      - run:
+          name: Build and push pip package
+          command: |
+            source circle/build_pip_package.sh
+workflows:
+  version: 2
+  test_deploy:
+    jobs:
+      - test:
+          context: 360platform
+      - deploy:
+          context: 360platform
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - test
