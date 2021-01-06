@@ -117,7 +117,7 @@ class SignatureDatabaseBase(object):
         raise NotImplementedError
 
     def __init__(self, k=16, N=63, n_grid=9,
-                 crop_percentile=(5, 95), distance_cutoff=0.45,
+                 crop_percentile=(5, 95), distance_cutoff=0.45, score_cutoff=9.0,
                  *signature_args, **signature_kwargs):
         """Set up storage scheme for images
 
@@ -159,6 +159,8 @@ class SignatureDatabaseBase(object):
                 considering how much variance to keep in the image (default (5, 95))
             distance_cutoff (Optional [float]): maximum image signature distance to
                 be considered a match (default 0.45)
+            score_cutoff (Optional [float]): minimum ElasticSearch relevance score to
+                be considered a match (default 9.0)
             *signature_args: Variable length argument list to pass to ImageSignature
             **signature_kwargs: Arbitrary keyword arguments to pass to ImageSignature
 
@@ -175,13 +177,21 @@ class SignatureDatabaseBase(object):
         self.N = N
         self.n_grid = n_grid
 
-        # Check float input
+        # Check float input for distance cutoff
         if type(distance_cutoff) is not float:
             raise TypeError('distance_cutoff should be a float')
         if distance_cutoff < 0.:
             raise ValueError('distance_cutoff should be > 0 (got %r)' % distance_cutoff)
 
         self.distance_cutoff = distance_cutoff
+
+        # Check float input for elasticsearch score cutoff
+        if type(score_cutoff) is not float:
+            raise TypeError('score_cutoff should be a float')
+        if score_cutoff < 0.:
+            raise ValueError('score_cutoff should be > 0 (got %r)' % score_cutoff)
+
+        self.score_cutoff = score_cutoff
 
         self.crop_percentile = crop_percentile
 
@@ -222,7 +232,7 @@ class SignatureDatabaseBase(object):
             pre_filter (Optional[dict]): filters list before applying the matching algorithm
                 (default None)
         Returns:
-            a formatted list of dicts representing unique matches, sorted by dist
+            a formatted list of dicts representing unique matches, sorted by dist or score (in case of using ElasticSearch)
 
             For example, if three matches are found:
 
@@ -238,6 +248,19 @@ class SignatureDatabaseBase(object):
               'path': u'https://c2.staticflickr.com/8/7158/6814444991_08d82de57e_z.jpg'}
             ]
 
+            Here is an ElasticSearch example:
+
+            [
+             {'score': 4.0,
+              'id': u'AVM37oZq0osmmAxpPvx7',
+              'path': u'https://pixabay.com/static/uploads/photo/2012/11/28/08/56/mona-lisa-67506_960_720.jpg'},
+             {'score': 35.0,
+              'id': u'AVM37nMg0osmmAxpPvx6',
+              'path': u'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg/687px-Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg'},
+             {'score': 10.0,
+              'id': u'AVM37p530osmmAxpPvx9',
+              'path': u'https://c2.staticflickr.com/8/7158/6814444991_08d82de57e_z.jpg'}
+            ]
         """
         img = self.gis.preprocess_image(path, bytestream)
 
@@ -277,12 +300,21 @@ class SignatureDatabaseBase(object):
 
         ids = set()
         unique = []
+        hasScore = False
         for item in result:
+            if 'score' in item:
+                hasScore = True
+
             if item['id'] not in ids:
                 unique.append(item)
                 ids.add(item['id'])
 
-        r = sorted(unique, key=itemgetter('dist'))
+        # If data comes from ElasticSearch - sort by score, otherwise - default to sorting by dist
+        if hasScore:
+            r = sorted(unique, key=itemgetter('score'), reverse=True)
+        else:
+            r = sorted(unique, key=itemgetter('dist'))
+
         return r
 
 

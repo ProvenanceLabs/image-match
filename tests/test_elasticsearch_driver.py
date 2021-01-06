@@ -125,7 +125,6 @@ def test_lookup_from_url(ses):
     assert len(r) == 1
     assert r[0]['path'] == 'test1.jpg'
     assert 'score' in r[0]
-    assert 'dist' in r[0]
     assert 'id' in r[0]
 
 
@@ -135,7 +134,6 @@ def test_lookup_from_file(ses):
     assert len(r) == 1
     assert r[0]['path'] == 'test1.jpg'
     assert 'score' in r[0]
-    assert 'dist' in r[0]
     assert 'id' in r[0]
 
 def test_lookup_from_bytestream(ses):
@@ -145,7 +143,6 @@ def test_lookup_from_bytestream(ses):
     assert len(r) == 1
     assert r[0]['path'] == 'test1.jpg'
     assert 'score' in r[0]
-    assert 'dist' in r[0]
     assert 'id' in r[0]
 
 def test_lookup_with_cutoff(ses):
@@ -174,7 +171,6 @@ def test_add_image_with_metadata(ses):
     assert r[0]['metadata'] == metadata
     assert 'path' in r[0]
     assert 'score' in r[0]
-    assert 'dist' in r[0]
     assert 'id' in r[0]
 
 
@@ -193,7 +189,7 @@ def test_lookup_with_filter_by_metadata(ses):
     assert len(r) == 1
     assert r[0]['metadata'] == metadata
 
-    r = ses.search_image('test1.jpg', pre_filter={"term": {"metadata.tenant_id": "bar-2"}})
+    r = ses.search_image('test2.jpg', pre_filter={"term": {"metadata.tenant_id": "bar-2"}})
     assert len(r) == 1
     assert r[0]['metadata'] == metadata2
 
@@ -209,12 +205,12 @@ def test_all_orientations(ses):
     r = ses.search_image('rotated_test1.jpg', all_orientations=True)
     assert len(r) == 1
     assert r[0]['path'] == 'test1.jpg'
-    assert r[0]['dist'] < 0.05  # some error from rotation
+    assert r[0]['score'] > 55  # some error from rotation
 
     with open('rotated_test1.jpg', 'rb') as f:
         r = ses.search_image(f.read(), bytestream=True, all_orientations=True)
         assert len(r) == 1
-        assert r[0]['dist'] < 0.05  # some error from rotation
+        assert r[0]['score'] > 55  # some error from rotation
 
 
 def test_duplicate(ses):
@@ -223,8 +219,8 @@ def test_duplicate(ses):
     r = ses.search_image('test1.jpg')
     assert len(r) == 2
     assert r[0]['path'] == 'test1.jpg'
+    assert r[1]['path'] == 'test1.jpg'
     assert 'score' in r[0]
-    assert 'dist' in r[0]
     assert 'id' in r[0]
 
 
