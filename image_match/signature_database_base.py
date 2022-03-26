@@ -270,7 +270,7 @@ class SignatureDatabaseBase(object):
             transformed_img = transform(img)
 
             # generate the signature
-            transformed_record = make_record(transformed_img, self.gis, self.k, self.N)
+            transformed_record = make_record(path, self.gis, self.k, self.N)
 
             l = self.search_single_record(transformed_record, pre_filter=pre_filter)
             result.extend(l)
