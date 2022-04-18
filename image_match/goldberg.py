@@ -96,7 +96,7 @@ class ImageSignature(object):
 
         self.handle_mpo = True
 
-    def generate_signature(self, path_or_image, bytestream=False):
+    def generate_signature(self, path_or_image, bytestream=True):
         """Generates an image signature.
 
         See section 3 of Goldberg, et al.
