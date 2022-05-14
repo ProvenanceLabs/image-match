@@ -1,6 +1,5 @@
 from elasticsearch import Elasticsearch
 from flask import Flask, request
-from flask_restful import
 from image_match.elasticsearch_driver import SignatureES
 from image_match.goldberg import ImageSignature
 import json
