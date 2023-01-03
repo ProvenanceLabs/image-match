@@ -22,7 +22,7 @@ as possible.  To write your own database backend, you can inherit from the
 
 .. code-block:: python
 
-    from signature_database_base import SignatureDatabaseBase
+    from image_match.signature_database_base import SignatureDatabaseBase
     # other relevant imports
 
     class MySignatureBackend(SignatureDatabaseBase):
